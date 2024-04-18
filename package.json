@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "rehoming-app",
+  "workspaces": [
+    "packages/mobile/*",
+    "packages/scrapers/*"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "puppeteer": "^22.6.5"
+  }
+}
