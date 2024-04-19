@@ -12,6 +12,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@types/react": "~18.2.45",
     "puppeteer": "^22.6.5"
   }
 }
