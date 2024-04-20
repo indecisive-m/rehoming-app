@@ -1,13 +1,4 @@
-import {
-  Text,
-  Box,
-  SafeAreaView,
-  Button,
-  Heading,
-  ButtonText,
-  VStack,
-  ScrollView,
-} from "@gluestack-ui/themed";
+import { Text, SafeAreaView, Button, ButtonText } from "@gluestack-ui/themed";
 import { Link } from "expo-router";
 
 export default function home() {

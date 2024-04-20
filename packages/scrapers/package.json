@@ -11,5 +11,8 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.42.4",
     "puppeteer": "^22.6.5"
+  },
+  "scripts": {
+    "server": "bun hollyhedge.ts"
   }
 }

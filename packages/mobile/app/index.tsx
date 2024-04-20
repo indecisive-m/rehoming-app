@@ -6,18 +6,21 @@ import {
   ButtonText,
   VStack,
   ScrollView,
-  Divider,
   Center,
-  Card,
-  Switch,
   ArrowRightIcon,
   ButtonIcon,
-  Progress,
-  ProgressFilledTrack,
 } from "@gluestack-ui/themed";
 import { Link } from "expo-router";
+import DogCard from "./components/DogCard";
+import { supabase } from "./utils/supabaseClient";
 
 export default function index() {
+  const fetchDetails = async () => {
+    const { data, error } = await supabase.from("dog").select();
+  };
+
+  fetchDetails();
+
   return (
     <SafeAreaView flex={1}>
       <ScrollView>
@@ -33,6 +36,7 @@ export default function index() {
             </Button>
           </Link>
         </VStack>
+        <DogCard />
       </ScrollView>
     </SafeAreaView>
   );
