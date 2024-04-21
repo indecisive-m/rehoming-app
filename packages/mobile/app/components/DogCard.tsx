@@ -1,17 +1,27 @@
 import { Card, Heading, Text, VStack } from "@gluestack-ui/themed";
-import { Image } from "react-native";
+import { Link } from "expo-router";
+import { Image, Pressable, useWindowDimensions } from "react-native";
 
-export default function DogCard() {
+export default function DogCard({ item }) {
+  const PADDING = 20;
   return (
-    <VStack px={$2}>
-      <Card variant="elevated" bgColor={"$cyan400"}>
-        <Heading>Dog Name</Heading>
-        <Image
-          style={{ height: 200, width: 200 }}
-          source={{ uri: "https://reactjs.org/logo-og.png" }}
-        />
-        <Text>Dog</Text>
-      </Card>
-    </VStack>
+    <Link
+      href={{
+        pathname: "/dog/[dog]",
+        params: { name: item.name },
+      }}
+      asChild
+    >
+      <Pressable>
+        <Card variant="elevated" bgColor={"$cyan400"} px={PADDING} mb={10}>
+          <Heading>{item.name}</Heading>
+          <Text>{item.sex}</Text>
+          <Image
+            source={{ uri: item.images[0] }}
+            style={{ height: 300, width: 300 }}
+          />
+        </Card>
+      </Pressable>
+    </Link>
   );
 }
