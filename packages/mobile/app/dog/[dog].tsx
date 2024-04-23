@@ -11,15 +11,14 @@ import {
 } from "@gluestack-ui/themed";
 import { useRouter } from "expo-router";
 import getASingleDog from "../utils/getASingleDog";
-import { Image, useWindowDimensions } from "react-native";
+import { Image, ListRenderItem, useWindowDimensions } from "react-native";
 import { Database } from "../constants/types";
 
 const dog = () => {
   const { name } = useLocalSearchParams();
   const router = useRouter();
   const { width } = useWindowDimensions();
-  const [dogDetails, setDogDetails] =
-    useState<Database["public"]["Tables"]["dog"]["Row"]>();
+  const [dogDetails, setDogDetails] = useState<Database>();
 
   const data = getASingleDog(name);
 
@@ -43,6 +42,12 @@ const dog = () => {
     timeLeft = "Red/Amber: 2-4 hours";
   }
 
+  const renderedImages: ListRenderItem<string> = ({ item }) => {
+    return (
+      <Image source={{ uri: item }} style={{ height: width, width: width }} />
+    );
+  };
+
   return (
     <SafeAreaView>
       <ScrollView px={10} showsVerticalScrollIndicator={false}>
@@ -51,18 +56,12 @@ const dog = () => {
           mb={10}
           horizontal
           pagingEnabled
-          renderItem={({ item }) => (
-            <Image
-              source={{ uri: item }}
-              style={{ height: width, width: width }}
-            />
-          )}
+          renderItem={renderedImages}
         />
         <VStack space="lg">
           <Heading size="2xl">{name}</Heading>
 
           <Text>{dogDetails?.description}</Text>
-
           <Text>
             <Text bold={true}>Fence Height Required:</Text>{" "}
             {dogDetails?.fence_height}
@@ -71,6 +70,7 @@ const dog = () => {
             <Text bold={true}>Good With Children:</Text>{" "}
             {dogDetails?.good_with_children}
           </Text>
+          <Text>{name}</Text>
           <Text>
             <Text bold={true}>Good With Cats:</Text>{" "}
             {dogDetails?.good_with_cats}

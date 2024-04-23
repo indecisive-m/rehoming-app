@@ -1,14 +1,4 @@
-import {
-  GluestackUIProvider,
-  Text,
-  Box,
-  SafeAreaView,
-  Button,
-  Heading,
-  ButtonText,
-  VStack,
-  ScrollView,
-} from "@gluestack-ui/themed";
+import { GluestackUIProvider } from "@gluestack-ui/themed";
 import { Slot } from "expo-router";
 import { config } from "@gluestack-ui/config"; // Optional if you want to use default theme
 
