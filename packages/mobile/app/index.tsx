@@ -10,9 +10,11 @@ import {
 import { useState } from "react";
 import DogCard from "./components/DogCard";
 import getDetails from "./utils/getDetails";
+import Header from "./components/Header";
+import { Database } from "./constants/types";
 
 export default function index() {
-  const [dogDetails, setDogDetails] = useState([]);
+  const [dogDetails, setDogDetails] = useState<Database[]>();
 
   const data = getDetails();
 
@@ -20,19 +22,15 @@ export default function index() {
 
   return (
     <SafeAreaView flex={1}>
-      <ScrollView>
-        <VStack space="md">
-          <Center bgColor="$cyan400" mb={10} py={10}>
-            <Heading>Rehoming App</Heading>
-            <Text>Animals available to be rehomed</Text>
-          </Center>
-        </VStack>
-      </ScrollView>
       <FlatList
+        contentContainerStyle={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
         data={dogDetails}
-        style={{ padding: 10 }}
+        ListHeaderComponent={<Header />}
         renderItem={({ item }) => <DogCard item={item} />}
-        keyExtractor={(item) => item.website_url}
+        keyExtractor={(item) => item.id}
       />
     </SafeAreaView>
   );

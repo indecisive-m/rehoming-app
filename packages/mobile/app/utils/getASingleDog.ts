@@ -1,10 +1,10 @@
 import { supabase } from "./supabaseClient";
 
-const getASingleDog = async (name) => {
+const getASingleDog = async (id) => {
   const { data } = await supabase
     .from("dog")
     .select()
-    .eq("name", name)
+    .eq("id", id)
     .maybeSingle();
 
   return data;

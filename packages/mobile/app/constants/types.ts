@@ -1,3 +1,5 @@
+import { Identifier } from "typescript";
+
 export type Database = {
   age: string | null;
   breed: string | null;
@@ -9,10 +11,11 @@ export type Database = {
   images: string[] | null;
   last_updated: string | null;
   location: string | null;
-  name: string;
+  name: string | null;
   rescue_name: string | null;
   reserved: string | null;
   sex: string | null;
   time_left: string | null;
-  website_url: string;
+  website_url: string | null;
+  id: number;
 };

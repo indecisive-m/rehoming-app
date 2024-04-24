@@ -15,12 +15,12 @@ import { Image, ListRenderItem, useWindowDimensions } from "react-native";
 import { Database } from "../constants/types";
 
 const dog = () => {
-  const { name } = useLocalSearchParams();
+  const { id } = useLocalSearchParams();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const [dogDetails, setDogDetails] = useState<Database>();
 
-  const data = getASingleDog(name);
+  const data = getASingleDog(id);
 
   data.then((res) => setDogDetails(res));
 
@@ -59,7 +59,7 @@ const dog = () => {
           renderItem={renderedImages}
         />
         <VStack space="lg">
-          <Heading size="2xl">{name}</Heading>
+          <Heading size="2xl">{dogDetails?.name}</Heading>
 
           <Text>{dogDetails?.description}</Text>
           <Text>
@@ -70,7 +70,7 @@ const dog = () => {
             <Text bold={true}>Good With Children:</Text>{" "}
             {dogDetails?.good_with_children}
           </Text>
-          <Text>{name}</Text>
+          <Text>{dogDetails?.name}</Text>
           <Text>
             <Text bold={true}>Good With Cats:</Text>{" "}
             {dogDetails?.good_with_cats}
