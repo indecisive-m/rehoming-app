@@ -17,33 +17,27 @@ const DogCard: ListRenderItem<Database> = ({ item }) => {
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
 
-        elevation: 5,
+        elevation: 9,
       }}
       href={{
         pathname: "/dog/[dog]",
         params: { id: item.id },
       }}
     >
-      <View
-        p={10}
-        justifyContent="center"
-        alignItems="center"
-        bgColor={"$backgroundDark100"}
-        borderRadius={5}
-      >
-        <Image
-          source={{ uri: item.images[0] }}
-          style={{
-            height: 350,
-            width: 350,
-            aspectRatio: 1,
-            borderRadius: 5,
-          }}
-        />
-        <View width={"100%"} px={10}>
-          <Heading size="2xl" pt={10}>
-            {item.name}
-          </Heading>
+      <View p={10} bgColor={"$backgroundDark100"} borderRadius={5}>
+        <View justifyContent="center" alignItems="center">
+          <Image
+            source={{ uri: item.images[0] }}
+            style={{
+              height: 350,
+              width: 350,
+              aspectRatio: 1,
+              borderRadius: 5,
+            }}
+          />
+        </View>
+        <View p={10} width={"100%"} alignItems="flex-start">
+          <Heading size="2xl">{item.name}</Heading>
           <Text size="sm">{item.sex.toUpperCase()}</Text>
         </View>
       </View>
