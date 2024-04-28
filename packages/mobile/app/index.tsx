@@ -1,13 +1,4 @@
-import {
-  Text,
-  SafeAreaView,
-  Heading,
-  VStack,
-  ScrollView,
-  Center,
-  FlatList,
-  View,
-} from "@gluestack-ui/themed";
+import { Text, FlatList, View } from "@gluestack-ui/themed";
 import { useEffect, useState } from "react";
 import DogCard from "./components/DogCard";
 import getDetails from "./utils/getDetails";
@@ -15,7 +6,6 @@ import Header from "./components/Header";
 import { Database } from "./constants/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
 
 export default function index() {
   const [dogDetails, setDogDetails] = useState<Database[]>(null);

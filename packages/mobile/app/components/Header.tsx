@@ -1,11 +1,4 @@
-import {
-  Center,
-  Heading,
-  VStack,
-  Text,
-  HStack,
-  Icon,
-} from "@gluestack-ui/themed";
+import { Center, Heading, VStack, Text, HStack } from "@gluestack-ui/themed";
 import { FontAwesome6 } from "@expo/vector-icons";
 
 export default function Header() {
