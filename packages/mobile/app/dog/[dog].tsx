@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import {
   Heading,
-  SafeAreaView,
   Pressable,
   Text,
   ScrollView,
@@ -19,7 +18,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const dog = () => {
   const { id } = useLocalSearchParams();
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { width } = useWindowDimensions();
   const [dogDetails, setDogDetails] = useState<Database>();
@@ -27,14 +25,6 @@ const dog = () => {
   const data = getASingleDog(id);
 
   data.then((res) => setDogDetails(res));
-
-  const image = dogDetails?.images.map((image) => {
-    <Image
-      source={{ uri: image }}
-      style={{ height: 200, width: 200 }}
-      key={image}
-    />;
-  });
 
   let timeLeft = "";
 
