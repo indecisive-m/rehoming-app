@@ -29,7 +29,7 @@ import { supabase } from "./supabaseClient";
       ".hh-rehome-single-desc p",
       (el) => {
         return el.map((el) => el.textContent);
-      },
+      }
     );
 
     // Remove last p tag as it's not important.
@@ -39,7 +39,7 @@ import { supabase } from "./supabaseClient";
       ".w3-display-container img[src]",
       (image) => {
         return image.map((el) => el.getAttribute("src"));
-      },
+      }
     );
 
     const name = await newPage.$eval(".hh-rehome-single-name", (name) => {
@@ -50,7 +50,7 @@ import { supabase } from "./supabaseClient";
       ".hh-rehome-single-info ul li",
       (details) => {
         return details.map((el) => el.textContent?.split(": "));
-      },
+      }
     );
 
     // Assign details value to variables. Check for undefined and if undefined set it to null as supabase is nullable
@@ -68,7 +68,7 @@ import { supabase } from "./supabaseClient";
 
     const { error, data } = await supabase.from("dog").upsert({
       name: name,
-      description: description.join(" "),
+      description: description,
       website_url: href,
       location: location,
       reserved: status,

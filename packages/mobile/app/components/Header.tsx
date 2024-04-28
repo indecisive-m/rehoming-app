@@ -16,7 +16,7 @@ export default function Header() {
         <FontAwesome6 name="filter" size={24} color="black" />
       </HStack>
       <Center>
-        <Text size="sm">Dogs in need of a new home</Text>
+        <Text size="md">Dogs in need of a new home</Text>
       </Center>
     </VStack>
   );

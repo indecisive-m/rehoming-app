@@ -15,6 +15,7 @@ import Header from "./components/Header";
 import { Database } from "./constants/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 export default function index() {
   const [dogDetails, setDogDetails] = useState<Database[]>(null);
@@ -46,7 +47,7 @@ export default function index() {
 
   return (
     <LinearGradient
-      colors={["rgba(240, 205, 247, 0.8)", "rgba(9, 235, 13, 0.2)"]}
+      colors={["rgba(240, 205, 247, 0.9)", "rgba(9, 235, 13, 0.4)"]}
       start={{ x: 0.2, y: 0.4 }}
       end={{ x: 1, y: 1 }}
       style={{
@@ -63,6 +64,7 @@ export default function index() {
             paddingBottom: insets.bottom,
           }}
           ListHeaderComponent={<Header />}
+          showsVerticalScrollIndicator={false}
           data={dogDetails}
           renderItem={({ item }) => <DogCard item={item} />}
         />

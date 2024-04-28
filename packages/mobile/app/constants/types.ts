@@ -3,7 +3,7 @@ import { Identifier } from "typescript";
 export type Database = {
   age: string | null;
   breed: string | null;
-  description: string | null;
+  description: Array<string> | null;
   fence_height: string | null;
   good_with_cats: string | null;
   good_with_children: string | null;
