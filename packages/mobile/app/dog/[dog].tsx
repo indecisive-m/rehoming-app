@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Link, useLocalSearchParams } from "expo-router";
 import {
   Heading,
   Pressable,
@@ -12,19 +12,35 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import getASingleDog from "../utils/getASingleDog";
-import { Image, ListRenderItem, useWindowDimensions } from "react-native";
+import {
+  Image,
+  ListRenderItem,
+  useWindowDimensions,
+  StyleSheet,
+} from "react-native";
 import { Database } from "../constants/types";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Loading from "../components/Loading";
 
 const dog = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const [dogDetails, setDogDetails] = useState<Database>();
+  const [imageHeight, setImageHeight] = useState(width);
+  const [imageWidth, setImageWidth] = useState(width);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const data = getASingleDog(id);
+  useEffect(() => {
+    setIsLoading(true);
+    const data = getASingleDog(id);
 
-  data.then((res) => setDogDetails(res));
+    data.then((res) => setDogDetails(res));
+
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3250);
+  }, []);
 
   let timeLeft = "";
 
@@ -39,7 +55,35 @@ const dog = () => {
 
   const renderedImages: ListRenderItem<string> = ({ item }) => {
     return (
-      <Image source={{ uri: item }} style={{ height: width, width: width }} />
+      <Link
+        href={{
+          pathname: "/dog/fullscreenImage",
+          params: { id: id },
+        }}
+      >
+        {/* <Pressable
+        onPress={() => {
+          // !isFullScreen ? setImageHeight(height) : setImageHeight(width);
+          // setIsFullScreen((prev) => !prev);
+
+          router.navigate()
+        }}
+      > */}
+        <Image
+          source={{ uri: item }}
+          style={
+            { height: width, width, width }
+            // !isFullScreen
+            //   ? { height: imageHeight, width: imageWidth }
+            //   : {
+            //       height: imageHeight,
+            //       width: imageWidth,
+            //       objectFit: "contain",
+            //     }
+          }
+        />
+        {/* </Pressable> */}
+      </Link>
     );
   };
 
@@ -48,6 +92,23 @@ const dog = () => {
       {paragraph}
     </Text>
   ));
+
+  if (isLoading) {
+    return (
+      <LinearGradient
+        colors={["rgba(240, 205, 247, 0.9)", "rgba(9, 235, 13, 0.4)"]}
+        start={{ x: 0.2, y: 0.4 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          height: "100%",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Loading />
+      </LinearGradient>
+    );
+  }
 
   return (
     <LinearGradient

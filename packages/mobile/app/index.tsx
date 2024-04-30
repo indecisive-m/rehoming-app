@@ -6,6 +6,8 @@ import Header from "./components/Header";
 import { Database } from "./constants/types";
 import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ImageCard from "./components/Loading";
+import Loading from "./components/Loading";
 
 export default function index() {
   const [dogDetails, setDogDetails] = useState<Database[]>(null);
