@@ -8,11 +8,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageCard from "./components/Loading";
 import Loading from "./components/Loading";
+import MultiColumnDogCard from "./components/MultiColumnDogCard";
 
 export default function index() {
   const [dogDetails, setDogDetails] = useState<Database[]>(null);
   const [isLoading, setIsLoading] = useState(true);
   const insets = useSafeAreaInsets();
+  const [columnView, setColumnView] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
@@ -44,8 +46,6 @@ export default function index() {
       end={{ x: 1, y: 1 }}
       style={{
         height: "100%",
-        justifyContent: "center",
-        alignItems: "center",
       }}
     >
       <View pt={insets.top}>
@@ -54,11 +54,21 @@ export default function index() {
             justifyContent: "center",
             alignItems: "center",
             paddingBottom: insets.bottom,
+            padding: 10,
+            // backgroundColor: "blue",
           }}
+          columnWrapperStyle={columnView ? { gap: 10 } : null}
+          numColumns={columnView ? 2 : 1}
           ListHeaderComponent={<Header />}
           showsVerticalScrollIndicator={false}
           data={dogDetails}
-          renderItem={({ item }) => <DogCard item={item} />}
+          renderItem={({ item }) =>
+            columnView ? (
+              <MultiColumnDogCard item={item} />
+            ) : (
+              <DogCard item={item} />
+            )
+          }
         />
       </View>
     </LinearGradient>

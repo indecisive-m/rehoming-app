@@ -1,7 +1,8 @@
-import { Heading, Text, View } from "@gluestack-ui/themed";
+import { HStack, Heading, Text, VStack, View } from "@gluestack-ui/themed";
 import { Link } from "expo-router";
 import { Image, ListRenderItem } from "react-native";
 import { Database } from "../constants/types";
+import { Entypo } from "@expo/vector-icons";
 
 const DogCard: ListRenderItem<Database> = ({ item }) => {
   const borderWidth = 0.75;
@@ -9,7 +10,7 @@ const DogCard: ListRenderItem<Database> = ({ item }) => {
     <Link
       style={{
         marginBottom: 20,
-        shadowColor: "#000",
+        shadowColor: "#fc03f0",
         shadowOffset: {
           width: 0,
           height: 4,
@@ -17,14 +18,14 @@ const DogCard: ListRenderItem<Database> = ({ item }) => {
         shadowOpacity: 0.32,
         shadowRadius: 5.46,
         elevation: 5,
-        backgroundColor: "white",
+        backgroundColor: "rgba(228, 255, 244, 0.6)",
       }}
       href={{
         pathname: "/dog/[dog]",
         params: { id: item.id },
       }}
     >
-      <View p={10} bgColor={"$backgroundDark100"}>
+      <View p={10}>
         <View justifyContent="center" alignItems="center">
           <Image
             source={{ uri: item.images[0] }}
@@ -57,10 +58,13 @@ const DogCard: ListRenderItem<Database> = ({ item }) => {
             <Heading>{item.reserved}</Heading>
           </View>
         </View>
-        <View p={10} width={"100%"} alignItems="flex-start">
-          <Heading size="2xl">{item.name}</Heading>
-          <Text size="sm">{item.sex.toUpperCase()}</Text>
-        </View>
+        <HStack justifyContent="space-around" alignItems="center" px={20}>
+          <VStack space="sm" py={10} width={"100%"} alignItems="flex-start">
+            <Heading size="2xl">{item.name}</Heading>
+            <Text size="md">{item.breed.toUpperCase()}</Text>
+          </VStack>
+          <Entypo name="arrow-with-circle-right" size={40} color="black" />
+        </HStack>
       </View>
     </Link>
   );
