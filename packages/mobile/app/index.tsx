@@ -9,12 +9,25 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ImageCard from "./components/Loading";
 import Loading from "./components/Loading";
 import MultiColumnDogCard from "./components/MultiColumnDogCard";
+import Drawer from "./components/Drawer";
+import { Easing, useSharedValue, withTiming } from "react-native-reanimated";
 
 export default function index() {
   const [dogDetails, setDogDetails] = useState<Database[]>(null);
   const [isLoading, setIsLoading] = useState(true);
   const insets = useSafeAreaInsets();
   const [columnView, setColumnView] = useState(true);
+
+  const translateX = useSharedValue(0);
+  const [showDrawer, setShowDrawer] = useState(false);
+
+  const handleClick = () => {
+    // translateX.value = withTiming((translateX.value = 1), {
+    //   duration: 4000,
+    //   easing: Easing.inOut(Easing.ease),
+    // });
+    setShowDrawer(true);
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -49,6 +62,13 @@ export default function index() {
       }}
     >
       <View pt={insets.top}>
+        {showDrawer && (
+          <Drawer
+            showDrawer={showDrawer}
+            setShowDrawer={setShowDrawer}
+            setColumnView={setColumnView}
+          />
+        )}
         <FlatList
           contentContainerStyle={{
             justifyContent: "center",
@@ -58,8 +78,9 @@ export default function index() {
             // backgroundColor: "blue",
           }}
           columnWrapperStyle={columnView ? { gap: 10 } : null}
+          extraData={columnView}
           numColumns={columnView ? 2 : 1}
-          ListHeaderComponent={<Header />}
+          ListHeaderComponent={<Header handleClick={handleClick} />}
           showsVerticalScrollIndicator={false}
           data={dogDetails}
           renderItem={({ item }) =>
