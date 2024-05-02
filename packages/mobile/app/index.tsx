@@ -11,43 +11,71 @@ import Loading from "./components/Loading";
 import MultiColumnDogCard from "./components/MultiColumnDogCard";
 import Drawer from "./components/Drawer";
 import { Easing, useSharedValue, withTiming } from "react-native-reanimated";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ListRenderItemInfo } from "react-native";
 
 export default function index() {
   const [dogDetails, setDogDetails] = useState<Database[]>(null);
   const [isLoading, setIsLoading] = useState(true);
   const insets = useSafeAreaInsets();
-  const [columnView, setColumnView] = useState(true);
+  const [multiColumnView, setMultiColumnView] = useState(false);
 
   const translateX = useSharedValue(0);
   const [showDrawer, setShowDrawer] = useState(false);
-
-  const handleClick = () => {
-    // translateX.value = withTiming((translateX.value = 1), {
-    //   duration: 4000,
-    //   easing: Easing.inOut(Easing.ease),
-    // });
-    setShowDrawer(true);
-  };
+  const [numberOfColumns, setNumberOfColumns] = useState(1);
 
   useEffect(() => {
     setIsLoading(true);
+
     const data = getDetails();
     data.then((res) => setDogDetails(res));
+    getAsyncStorage();
 
-    setIsLoading(false);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
   }, []);
+
+  const showAvailableDogs = () => {
+    setDogDetails(dogDetails.filter((dog) => dog.reserved === "Available"));
+  };
+
+  const showAllDogs = () => {
+    const data = getDetails();
+    data.then((res) => setDogDetails(res));
+  };
+
+  const getAsyncStorage = async () => {
+    try {
+      const layout = await AsyncStorage.getItem("layout");
+      const value = JSON.parse(layout);
+      if (value === false) {
+        setMultiColumnView(false);
+        setNumberOfColumns(1);
+      }
+      if (value === true) {
+        setMultiColumnView(true);
+        setNumberOfColumns(2);
+      }
+      return layout;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   if (isLoading) {
     return (
       <LinearGradient
-        colors={["#FFF", "rgba(100, 100, 100, 0.2)"]}
+        colors={["rgba(240, 205, 247, 0.9)", "rgba(9, 235, 13, 0.4)"]}
+        start={{ x: 0.2, y: 0.4 }}
+        end={{ x: 1, y: 1 }}
         style={{
           height: "100%",
           justifyContent: "center",
           alignItems: "center",
         }}
       >
-        <Text color="white">Loading...</Text>
+        <Loading />
       </LinearGradient>
     );
   }
@@ -66,7 +94,12 @@ export default function index() {
           <Drawer
             showDrawer={showDrawer}
             setShowDrawer={setShowDrawer}
-            setColumnView={setColumnView}
+            multiColumnView={multiColumnView}
+            setMultiColumnView={setMultiColumnView}
+            numberOfColumns={numberOfColumns}
+            setNumberOfColumns={setNumberOfColumns}
+            showAvailableDogs={showAvailableDogs}
+            showAllDogs={showAllDogs}
           />
         )}
         <FlatList
@@ -75,16 +108,15 @@ export default function index() {
             alignItems: "center",
             paddingBottom: insets.bottom,
             padding: 10,
-            // backgroundColor: "blue",
           }}
-          columnWrapperStyle={columnView ? { gap: 10 } : null}
-          extraData={columnView}
-          numColumns={columnView ? 2 : 1}
-          ListHeaderComponent={<Header handleClick={handleClick} />}
+          columnWrapperStyle={multiColumnView ? { gap: 10 } : null}
+          key={numberOfColumns}
+          numColumns={numberOfColumns}
+          ListHeaderComponent={<Header setShowDrawer={setShowDrawer} />}
           showsVerticalScrollIndicator={false}
           data={dogDetails}
-          renderItem={({ item }) =>
-            columnView ? (
+          renderItem={({ item }: ListRenderItem<Database>) =>
+            multiColumnView ? (
               <MultiColumnDogCard item={item} />
             ) : (
               <DogCard item={item} />

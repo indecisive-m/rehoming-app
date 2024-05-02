@@ -1,6 +1,11 @@
 import { Center, Heading, Text, View, Pressable } from "@gluestack-ui/themed";
 import { Link } from "expo-router";
-import { Image, ListRenderItem, useWindowDimensions } from "react-native";
+import {
+  Image,
+  ListRenderItem,
+  ListRenderItemInfo,
+  useWindowDimensions,
+} from "react-native";
 import { Database } from "../constants/types";
 
 const MultiColumnDogCard: ListRenderItem<Database> = ({ item }) => {

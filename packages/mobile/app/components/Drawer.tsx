@@ -6,10 +6,41 @@ import Animated, {
   SlideOutLeft,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Drawer({ showDrawer, setShowDrawer, setColumnView }) {
+export default function Drawer({
+  showDrawer,
+  setShowDrawer,
+  setMultiColumnView,
+  multiColumnView,
+  numberOfColumns,
+  setNumberOfColumns,
+  showAvailableDogs,
+  showAllDogs,
+}) {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
+
+  const handleDisplayLayout = () => {
+    if (multiColumnView) {
+      setNumberOfColumns(1);
+      setMultiColumnView((prev: boolean) => !prev);
+      setAsyncStorage(JSON.stringify(!multiColumnView));
+    }
+    if (!multiColumnView) {
+      setNumberOfColumns(2);
+      setMultiColumnView((prev: boolean) => !prev);
+      setAsyncStorage(JSON.stringify(!multiColumnView));
+    }
+  };
+
+  const setAsyncStorage = async (layout: string) => {
+    try {
+      await AsyncStorage.setItem("layout", layout);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Animated.View
@@ -26,7 +57,7 @@ export default function Drawer({ showDrawer, setShowDrawer, setColumnView }) {
           paddingHorizontal: 20,
         },
       ]}
-      entering={FadeInLeft}
+      entering={SlideInLeft}
       exiting={SlideOutLeft}
     >
       <Pressable
@@ -36,20 +67,16 @@ export default function Drawer({ showDrawer, setShowDrawer, setColumnView }) {
       >
         <Text>Close</Text>
       </Pressable>
-      <Text>hello</Text>
-      <Pressable onPress={() => setColumnView((prev) => !prev)}>
+
+      <Pressable onPress={() => handleDisplayLayout()}>
         <Text>View mode</Text>
+      </Pressable>
+      <Pressable onPress={() => showAvailableDogs()}>
+        <Text>Only Show Available Dogs</Text>
+      </Pressable>
+      <Pressable onPress={() => showAllDogs()}>
+        <Text>Show All Dogs</Text>
       </Pressable>
     </Animated.View>
   );
 }
-
-// 4 tasks to go:
-
-// Appointment 5hrs 56
-
-// shoulder massage 5hrs 56
-
-// discuss nursery plans 4hrs 2
-
-// discuss colour scheme 2hrs 8
