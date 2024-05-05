@@ -115,7 +115,7 @@ export default function index() {
           ListHeaderComponent={<Header setShowDrawer={setShowDrawer} />}
           showsVerticalScrollIndicator={false}
           data={dogDetails}
-          renderItem={({ item }: ListRenderItem<Database>) =>
+          renderItem={({ item }) =>
             multiColumnView ? (
               <MultiColumnDogCard item={item} />
             ) : (

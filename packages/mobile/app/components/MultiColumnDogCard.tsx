@@ -12,6 +12,7 @@ const MultiColumnDogCard: ListRenderItem<Database> = ({ item }) => {
   const borderWidth = 0.75;
   const MARGIN = 20;
   const { width } = useWindowDimensions();
+
   return (
     <Link
       style={{
@@ -56,7 +57,9 @@ const MultiColumnDogCard: ListRenderItem<Database> = ({ item }) => {
                   top: -50,
                 }}
               />
-              <Heading size="lg">{item.name}</Heading>
+              <Heading size="lg" numberOfLines={1}>
+                {item.name}
+              </Heading>
               <Text size="sm" numberOfLines={1}>
                 {item.breed.toUpperCase()}
               </Text>

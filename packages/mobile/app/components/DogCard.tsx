@@ -60,7 +60,9 @@ const DogCard: ListRenderItem<Database> = ({ item }) => {
         </View>
         <HStack justifyContent="space-around" alignItems="center" px={20}>
           <VStack space="sm" py={10} width={"100%"} alignItems="flex-start">
-            <Heading size="2xl">{item.name}</Heading>
+            <Heading size="2xl" numberOfLines={1}>
+              {item.name}
+            </Heading>
             <Text size="md">{item.breed.toUpperCase()}</Text>
           </VStack>
           <Entypo name="arrow-with-circle-right" size={40} color="black" />
