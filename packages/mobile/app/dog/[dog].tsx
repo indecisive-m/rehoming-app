@@ -40,6 +40,7 @@ const dog = () => {
   let timeLeft = "";
 
   let dogName: string;
+  let dogDescription = dogDetails?.description;
 
   if (dogDetails?.time_left === "Red") {
     timeLeft = "Red: 0-3 hours";
@@ -50,6 +51,11 @@ const dog = () => {
   }
   if (dogDetails?.name !== undefined) {
     dogName = upperCaseName(dogDetails?.name);
+  }
+
+  if (dogDetails?.rescue_name === "RSPCA") {
+    const nameString = dogDetails?.description.toString();
+    dogDescription = nameString.split(".");
   }
 
   const renderedImages: ListRenderItem<string> = ({ item }) => {
@@ -65,9 +71,12 @@ const dog = () => {
     );
   };
 
-  const paragraph = dogDetails?.description.map((paragraph, idx) => (
+  // Replace all multiple white Spaces with a single space.
+  // Trim the ends and beginning of any white space
+
+  const paragraph = dogDescription?.map((paragraph, idx) => (
     <Text size="lg" color="$textDark900" key={idx}>
-      {paragraph}
+      {paragraph.replace(/\s{2,}/g, " ").trim()}
     </Text>
   ));
 
