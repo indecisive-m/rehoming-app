@@ -1,12 +1,8 @@
 import { Center, Heading, Text, View, Pressable } from "@gluestack-ui/themed";
 import { Link } from "expo-router";
-import {
-  Image,
-  ListRenderItem,
-  ListRenderItemInfo,
-  useWindowDimensions,
-} from "react-native";
+import { Image, ListRenderItem, useWindowDimensions } from "react-native";
 import { Database } from "../constants/types";
+import { upperCaseName } from "../utils/utils";
 
 const MultiColumnDogCard: ListRenderItem<Database> = ({ item }) => {
   const borderWidth = 0.75;
@@ -15,6 +11,8 @@ const MultiColumnDogCard: ListRenderItem<Database> = ({ item }) => {
 
   const status =
     item.reserved === "I've been reserved" ? "Reserved" : item.reserved;
+
+  const dogName = upperCaseName(item.name);
 
   return (
     <Link
@@ -61,7 +59,7 @@ const MultiColumnDogCard: ListRenderItem<Database> = ({ item }) => {
                 }}
               />
               <Heading size="lg" numberOfLines={1}>
-                {item.name}
+                {dogName}
               </Heading>
               <Text size="sm" numberOfLines={1}>
                 {item.breed.toUpperCase()}

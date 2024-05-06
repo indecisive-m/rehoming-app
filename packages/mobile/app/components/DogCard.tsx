@@ -3,12 +3,15 @@ import { Link } from "expo-router";
 import { Image, ListRenderItem } from "react-native";
 import { Database } from "../constants/types";
 import { Entypo } from "@expo/vector-icons";
+import { upperCaseName } from "../utils/utils";
 
 const DogCard: ListRenderItem<Database> = ({ item }) => {
   const borderWidth = 0.75;
 
   const status =
     item.reserved === "I've been reserved" ? "Reserved" : item.reserved;
+
+  const dogName = upperCaseName(item.name);
 
   return (
     <Link
@@ -65,7 +68,7 @@ const DogCard: ListRenderItem<Database> = ({ item }) => {
         <HStack justifyContent="space-around" alignItems="center" px={20}>
           <VStack space="sm" py={10} width={"100%"} alignItems="flex-start">
             <Heading size="2xl" numberOfLines={1}>
-              {item.name}
+              {dogName}
             </Heading>
             <Text size="md">{item.breed.toUpperCase()}</Text>
           </VStack>

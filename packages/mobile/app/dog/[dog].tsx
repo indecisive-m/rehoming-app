@@ -12,14 +12,10 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import getASingleDog from "../utils/getASingleDog";
-import {
-  Image,
-  ListRenderItem,
-  useWindowDimensions,
-  StyleSheet,
-} from "react-native";
+import { Image, ListRenderItem, useWindowDimensions } from "react-native";
 import { Database } from "../constants/types";
 import Loading from "../components/Loading";
+import { upperCaseName } from "../utils/utils";
 
 const dog = () => {
   const { id } = useLocalSearchParams();
@@ -36,11 +32,14 @@ const dog = () => {
     const data = getASingleDog(id);
 
     data.then((res) => setDogDetails(res));
-
-    setIsLoading(false);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
   }, []);
 
   let timeLeft = "";
+
+  let dogName: string;
 
   if (dogDetails?.time_left === "Red") {
     timeLeft = "Red: 0-3 hours";
@@ -49,7 +48,9 @@ const dog = () => {
   } else {
     timeLeft = "Red/Amber: 2-4 hours";
   }
-  ``;
+  if (dogDetails?.name !== undefined) {
+    dogName = upperCaseName(dogDetails?.name);
+  }
 
   const renderedImages: ListRenderItem<string> = ({ item }) => {
     return (
@@ -59,28 +60,7 @@ const dog = () => {
           params: { id: id },
         }}
       >
-        {/* <Pressable
-        onPress={() => {
-          // !isFullScreen ? setImageHeight(height) : setImageHeight(width);
-          // setIsFullScreen((prev) => !prev);
-
-          router.navigate()
-        }}
-      > */}
-        <Image
-          source={{ uri: item }}
-          style={
-            { height: width, width, width }
-            // !isFullScreen
-            //   ? { height: imageHeight, width: imageWidth }
-            //   : {
-            //       height: imageHeight,
-            //       width: imageWidth,
-            //       objectFit: "contain",
-            //     }
-          }
-        />
-        {/* </Pressable> */}
+        <Image source={{ uri: item }} style={{ height: width, width: width }} />
       </Link>
     );
   };
@@ -131,10 +111,10 @@ const dog = () => {
           />
           <VStack space="lg" p={20}>
             <Heading size="2xl" color="$textDark950">
-              {dogDetails?.name}
+              {dogName}
             </Heading>
             {paragraph}
-
+            <Text>{dogDetails?.rescue_name}</Text>
             <Text>
               <Text bold={true}>Fence Height Required:</Text>{" "}
               {dogDetails?.fence_height}
