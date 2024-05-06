@@ -6,6 +6,10 @@ import { Entypo } from "@expo/vector-icons";
 
 const DogCard: ListRenderItem<Database> = ({ item }) => {
   const borderWidth = 0.75;
+
+  const status =
+    item.reserved === "I've been reserved" ? "Reserved" : item.reserved;
+
   return (
     <Link
       style={{
@@ -55,7 +59,7 @@ const DogCard: ListRenderItem<Database> = ({ item }) => {
             borderRightColor={"black"}
             borderBottomColor={"black"}
           >
-            <Heading>{item.reserved}</Heading>
+            <Heading>{status}</Heading>
           </View>
         </View>
         <HStack justifyContent="space-around" alignItems="center" px={20}>

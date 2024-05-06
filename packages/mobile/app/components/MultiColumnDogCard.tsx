@@ -13,6 +13,9 @@ const MultiColumnDogCard: ListRenderItem<Database> = ({ item }) => {
   const MARGIN = 20;
   const { width } = useWindowDimensions();
 
+  const status =
+    item.reserved === "I've been reserved" ? "Reserved" : item.reserved;
+
   return (
     <Link
       style={{
@@ -63,7 +66,7 @@ const MultiColumnDogCard: ListRenderItem<Database> = ({ item }) => {
               <Text size="sm" numberOfLines={1}>
                 {item.breed.toUpperCase()}
               </Text>
-              <Text size="sm">{item.reserved}</Text>
+              <Text size="sm">{status}</Text>
             </View>
           </View>
         </View>

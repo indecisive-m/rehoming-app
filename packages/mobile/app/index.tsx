@@ -33,7 +33,7 @@ export default function index() {
 
     setTimeout(() => {
       setIsLoading(false);
-    }, 5000);
+    }, 3000);
   }, []);
 
   const showAvailableDogs = () => {

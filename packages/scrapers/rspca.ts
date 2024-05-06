@@ -49,13 +49,31 @@ import { supabase } from "./supabaseClient";
         return el.map((el) => el.textContent);
       });
 
-      // // Remove last p tag as it's not important.
-      // description.pop();
+      const images = await newPage.evaluate(() => {
+        let imgArray: Array<string | undefined> = [];
 
-      const image = await newPage.$$eval(".carouselImgHolder img", (image) => {
-        return image.map(
-          (el) => `https://www.rspca.org.uk${el.getAttribute("src")}`
-        );
+        const noCarousel = document.querySelector(".noCarousel");
+
+        if (noCarousel) {
+          imgArray.push(noCarousel.getAttribute("src")?.split("&")[2]);
+          const imgMap = imgArray.map((img) => {
+            return `https://www.rspca.org.uk/GenericImage/CallGenericImage?source=petSearch&size=large&${img}`;
+          });
+
+          return imgMap;
+        }
+
+        const images = document.querySelectorAll(".carouselImgHolder img");
+
+        images.forEach((image) => {
+          imgArray.push(image.getAttribute("src")?.split("&")[2]);
+        });
+
+        const imgMap = imgArray.map((img) => {
+          return `https://www.rspca.org.uk/GenericImage/CallGenericImage?source=petSearch&size=large&${img}`;
+        });
+
+        return imgMap;
       });
 
       const name = await newPage.$eval(".animalHeading h1", (name) => {
@@ -92,10 +110,10 @@ import { supabase } from "./supabaseClient";
 
       const breed = aboutMe[0] || null;
       const age = aboutMe[2] || null;
-      const goodWithChildren = details[1] || null;
-      const timeLeft = details[2] || null;
-      const goodWithDogs = details[3] || null;
-      const goodWithCats = details[4] || null;
+      const goodWithChildren = details[1]?.toString() || null;
+      const timeLeft = details[2]?.toString() || null;
+      const goodWithDogs = details[3]?.toString() || null;
+      const goodWithCats = details[4]?.toString() || null;
 
       const { error, data } = await supabase.from("dog").upsert({
         name: name,
@@ -109,7 +127,7 @@ import { supabase } from "./supabaseClient";
         good_with_dogs: goodWithDogs,
         good_with_cats: goodWithCats,
         time_left: timeLeft,
-        images: image,
+        images: images,
         rescue_name: "RSPCA",
       });
 

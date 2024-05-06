@@ -37,9 +37,7 @@ const dog = () => {
 
     data.then((res) => setDogDetails(res));
 
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3250);
+    setIsLoading(false);
   }, []);
 
   let timeLeft = "";
@@ -145,7 +143,7 @@ const dog = () => {
               <Text bold={true}>Good With Children:</Text>{" "}
               {dogDetails?.good_with_children}
             </Text>
-            <Text>{dogDetails?.name}</Text>
+
             <Text>
               <Text bold={true}>Age:</Text> {dogDetails?.age}
             </Text>
