@@ -16,6 +16,7 @@ import { Image, ListRenderItem, useWindowDimensions } from "react-native";
 import { Database } from "../constants/types";
 import Loading from "../components/Loading";
 import { upperCaseName } from "../utils/utils";
+import * as WebBrowser from "expo-web-browser";
 
 const dog = () => {
   const { id } = useLocalSearchParams();
@@ -36,6 +37,10 @@ const dog = () => {
       setIsLoading(false);
     }, 5000);
   }, []);
+
+  const openWebsiteLink = async () => {
+    const open = await WebBrowser.openBrowserAsync(dogDetails?.website_url);
+  };
 
   let timeLeft = "";
 
@@ -153,6 +158,9 @@ const dog = () => {
               {timeLeft}
             </Text>
             <Text>{dogDetails?.reserved}</Text>
+            <Pressable onPress={() => openWebsiteLink()}>
+              <Text>See on Website</Text>
+            </Pressable>
             <Pressable onPress={() => router.back()}>
               <Heading>Go Back</Heading>
             </Pressable>
