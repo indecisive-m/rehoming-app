@@ -5,7 +5,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 export default function App() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { staleTime: Infinity } },
+  });
+
   useEffect(() => {
     async function prepare() {
       await SplashScreen.preventAutoHideAsync();
@@ -14,12 +19,14 @@ export default function App() {
   }, []);
 
   return (
-    <GluestackUIProvider config={config}>
-      <SafeAreaProvider>
-        <GestureHandlerRootView>
-          <Slot />
-        </GestureHandlerRootView>
-      </SafeAreaProvider>
-    </GluestackUIProvider>
+    <QueryClientProvider client={queryClient}>
+      <GluestackUIProvider config={config}>
+        <SafeAreaProvider>
+          <GestureHandlerRootView>
+            <Slot />
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
+      </GluestackUIProvider>
+    </QueryClientProvider>
   );
 }

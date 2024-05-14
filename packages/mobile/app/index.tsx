@@ -13,10 +13,11 @@ import Drawer from "./components/Drawer";
 import { Easing, useSharedValue, withTiming } from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ListRenderItemInfo } from "react-native";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function index() {
   const [dogDetails, setDogDetails] = useState<Database[]>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const insets = useSafeAreaInsets();
   const [multiColumnView, setMultiColumnView] = useState(false);
 
@@ -24,17 +25,12 @@ export default function index() {
   const [showDrawer, setShowDrawer] = useState(false);
   const [numberOfColumns, setNumberOfColumns] = useState(1);
 
-  useEffect(() => {
-    setIsLoading(true);
+  const queryClient = useQueryClient();
 
-    const data = getDetails();
-    data.then((res) => setDogDetails(res));
-    getAsyncStorage();
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-  }, []);
+  const { data, isLoading } = useQuery({
+    queryKey: ["dogs"],
+    queryFn: getDetails,
+  });
 
   const showAvailableDogs = () => {
     setDogDetails(dogDetails.filter((dog) => dog.reserved === "Available"));
@@ -114,7 +110,7 @@ export default function index() {
           numColumns={numberOfColumns}
           ListHeaderComponent={<Header setShowDrawer={setShowDrawer} />}
           showsVerticalScrollIndicator={false}
-          data={dogDetails}
+          data={data}
           renderItem={({ item }) =>
             multiColumnView ? (
               <MultiColumnDogCard item={item} />

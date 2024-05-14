@@ -17,62 +17,49 @@ import { Database } from "../constants/types";
 import Loading from "../components/Loading";
 import { upperCaseName } from "../utils/utils";
 import * as WebBrowser from "expo-web-browser";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const dog = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { width, height } = useWindowDimensions();
-  const [dogDetails, setDogDetails] = useState<Database>();
-  const [imageHeight, setImageHeight] = useState(width);
-  const [imageWidth, setImageWidth] = useState(width);
-  const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    setIsLoading(true);
-    const data = getASingleDog(id);
-
-    data.then((res) => setDogDetails(res));
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 5000);
-  }, []);
+  const { data, isLoading } = useQuery({
+    queryKey: ["dog", id],
+    queryFn: () => getASingleDog(id),
+  });
 
   const openWebsiteLink = async () => {
-    const open = await WebBrowser.openBrowserAsync(dogDetails?.website_url);
+    const open = await WebBrowser.openBrowserAsync(data?.website_url);
   };
 
   let timeLeft = "";
 
   let dogName: string;
-  let dogDescription = dogDetails?.description;
+  let dogDescription = data?.description;
 
-  if (dogDetails?.time_left === "Red") {
+  if (data?.time_left === "Red") {
     timeLeft = "Red: 0-3 hours";
-  } else if (dogDetails?.time_left === "Amber") {
+  } else if (data?.time_left === "Amber") {
     timeLeft = "Amber: 4 hours";
   } else {
     timeLeft = "Red/Amber: 2-4 hours";
   }
-  if (dogDetails?.name !== undefined) {
-    dogName = upperCaseName(dogDetails?.name);
+  if (data?.name !== undefined) {
+    dogName = upperCaseName(data?.name);
   }
 
-  if (dogDetails?.rescue_name === "RSPCA") {
-    const nameString = dogDetails?.description.toString();
+  if (data?.rescue_name === "RSPCA") {
+    const nameString = data?.description.toString();
     dogDescription = nameString.split(".");
   }
 
   const renderedImages: ListRenderItem<string> = ({ item }) => {
     return (
-      <Link
-        href={{
-          pathname: "/dog/fullscreenImage",
-          params: { id: id },
-        }}
-      >
+      <Pressable onPress={() => {}}>
         <Image source={{ uri: item }} style={{ height: width, width: width }} />
-      </Link>
+      </Pressable>
     );
   };
 
@@ -113,60 +100,57 @@ const dog = () => {
         alignItems: "center",
       }}
     >
-      <View>
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <FlatList
-            data={dogDetails?.images}
-            mb={10}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            renderItem={renderedImages}
-          />
-          <VStack space="lg" p={20}>
-            <Heading size="2xl" color="$textDark950">
-              {dogName}
-            </Heading>
-            {paragraph}
-            <Text>{dogDetails?.rescue_name}</Text>
-            <Text>
-              <Text bold={true}>Fence Height Required:</Text>{" "}
-              {dogDetails?.fence_height}
-            </Text>
-            <Text>
-              <Text bold={true}>Good With Children:</Text>{" "}
-              {dogDetails?.good_with_children}
-            </Text>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <FlatList
+          data={data?.images}
+          mb={10}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          renderItem={renderedImages}
+        />
+        <VStack space="lg" p={20}>
+          <Heading size="2xl" color="$textDark950">
+            {dogName}
+          </Heading>
+          {paragraph}
+          <Text>{data?.rescue_name}</Text>
+          <Text>
+            <Text bold={true}>Fence Height Required:</Text> {data?.fence_height}
+          </Text>
+          <Text>
+            <Text bold={true}>Good With Children:</Text>{" "}
+            {data?.good_with_children}
+          </Text>
 
-            <Text>
-              <Text bold={true}>Age:</Text> {dogDetails?.age}
-            </Text>
-            <Text>
-              <Text bold={true}>Sex: </Text>
-              {dogDetails?.sex}
-            </Text>
-            <Text>
-              <Text bold={true}>Breed: </Text>
-              {dogDetails?.breed}
-            </Text>
-            <Text>
-              <Text bold={true}>Current Location: </Text>
-              {dogDetails?.location}
-            </Text>
-            <Text>
-              <Text bold={true}>Time Able To Be Left: </Text>
-              {timeLeft}
-            </Text>
-            <Text>{dogDetails?.reserved}</Text>
-            <Pressable onPress={() => openWebsiteLink()}>
-              <Text>See on Website</Text>
-            </Pressable>
-            <Pressable onPress={() => router.back()}>
-              <Heading>Go Back</Heading>
-            </Pressable>
-          </VStack>
-        </ScrollView>
-      </View>
+          <Text>
+            <Text bold={true}>Age:</Text> {data?.age}
+          </Text>
+          <Text>
+            <Text bold={true}>Sex: </Text>
+            {data?.sex}
+          </Text>
+          <Text>
+            <Text bold={true}>Breed: </Text>
+            {data?.breed}
+          </Text>
+          <Text>
+            <Text bold={true}>Current Location: </Text>
+            {data?.location}
+          </Text>
+          <Text>
+            <Text bold={true}>Time Able To Be Left: </Text>
+            {timeLeft}
+          </Text>
+          <Text>{data?.reserved}</Text>
+          <Pressable onPress={() => openWebsiteLink()}>
+            <Text>See on Website</Text>
+          </Pressable>
+          <Pressable onPress={() => router.back()}>
+            <Heading>Go Back</Heading>
+          </Pressable>
+        </VStack>
+      </ScrollView>
     </LinearGradient>
   );
 };
