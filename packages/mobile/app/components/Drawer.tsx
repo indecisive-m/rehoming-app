@@ -36,6 +36,7 @@ export default function Drawer({
 
   const setAsyncStorage = async (layout: string) => {
     try {
+      console.log("async" + layout);
       await AsyncStorage.setItem("layout", layout);
     } catch (error) {
       console.log(error);

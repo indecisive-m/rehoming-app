@@ -16,16 +16,13 @@ import { ListRenderItemInfo } from "react-native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function index() {
-  const [dogDetails, setDogDetails] = useState<Database[]>(null);
-  // const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+
   const insets = useSafeAreaInsets();
   const [multiColumnView, setMultiColumnView] = useState(false);
 
-  const translateX = useSharedValue(0);
   const [showDrawer, setShowDrawer] = useState(false);
   const [numberOfColumns, setNumberOfColumns] = useState(1);
-
-  const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
     queryKey: ["dogs"],
@@ -33,18 +30,16 @@ export default function index() {
   });
 
   const showAvailableDogs = () => {
-    setDogDetails(dogDetails.filter((dog) => dog.reserved === "Available"));
+    data.filter((dog) => dog.reserved === "Available");
   };
 
-  const showAllDogs = () => {
-    const data = getDetails();
-    data.then((res) => setDogDetails(res));
-  };
+  const showAllDogs = () => {};
 
   const getAsyncStorage = async () => {
     try {
       const layout = await AsyncStorage.getItem("layout");
       const value = JSON.parse(layout);
+      console.log("value: " + value);
       if (value === false) {
         setMultiColumnView(false);
         setNumberOfColumns(1);

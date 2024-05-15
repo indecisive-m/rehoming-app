@@ -12,17 +12,24 @@ import {
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import getASingleDog from "../utils/getASingleDog";
+import { AntDesign } from "@expo/vector-icons";
+
 import { Image, ListRenderItem, useWindowDimensions } from "react-native";
 import { Database } from "../constants/types";
 import Loading from "../components/Loading";
 import { upperCaseName } from "../utils/utils";
 import * as WebBrowser from "expo-web-browser";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const dog = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { width, height } = useWindowDimensions();
+  const [makeFullSize, setMakeFullSize] = useState(false);
+  const [selected, setSelected] = useState();
+  const insets = useSafeAreaInsets();
+
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -55,9 +62,14 @@ const dog = () => {
     dogDescription = nameString.split(".");
   }
 
-  const renderedImages: ListRenderItem<string> = ({ item }) => {
+  const RenderedImages: ListRenderItem<string> = ({ item, selected }) => {
     return (
-      <Pressable onPress={() => {}}>
+      <Pressable
+        onPress={() => {
+          setSelected(item);
+          setMakeFullSize(true);
+        }}
+      >
         <Image source={{ uri: item }} style={{ height: width, width: width }} />
       </Pressable>
     );
@@ -89,6 +101,30 @@ const dog = () => {
     );
   }
 
+  if (makeFullSize) {
+    console.log(selected);
+    return (
+      <View position="relative">
+        <Pressable onPress={() => setMakeFullSize(false)}>
+          <AntDesign
+            name="closecircle"
+            size={24}
+            color="black"
+            style={{
+              position: "absolute",
+              top: insets.top,
+              right: 30,
+            }}
+          />
+        </Pressable>
+        <Image
+          source={{ uri: selected }}
+          style={{ height: height, width: width, objectFit: "contain" }}
+        />
+      </View>
+    );
+  }
+
   return (
     <LinearGradient
       colors={["rgba(240, 205, 247, 0.9)", "rgba(9, 235, 13, 0.4)"]}
@@ -107,7 +143,9 @@ const dog = () => {
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
-          renderItem={renderedImages}
+          renderItem={({ item }) => (
+            <RenderedImages selected={selected} item={item} />
+          )}
         />
         <VStack space="lg" p={20}>
           <Heading size="2xl" color="$textDark950">
