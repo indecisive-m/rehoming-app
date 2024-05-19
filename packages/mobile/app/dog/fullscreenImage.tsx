@@ -18,15 +18,13 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 
 const fullscreenImage = () => {
-  const { id } = useLocalSearchParams();
+  const { item } = useLocalSearchParams();
   const [dogImages, setDogImages] = useState();
   const [pressed, setPressed] = useState(false);
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const data = getASingleDog(id);
 
-  data.then((res) => setDogImages(res.images));
-
+  console.log(typeof item);
   const { width, height } = useWindowDimensions();
 
   const renderedImages: ListRenderItem<string> = ({ item }) => (
@@ -68,13 +66,14 @@ const fullscreenImage = () => {
           />
         </Pressable>
         <FlatList
-          data={dogImages}
+          data={item}
           renderItem={renderedImages}
           horizontal
           showsHorizontalScrollIndicator={false}
           pagingEnabled={true}
         />
       </View>
+      <Text>hello</Text>
     </LinearGradient>
   );
 };

@@ -15,7 +15,6 @@ import getASingleDog from "../utils/getASingleDog";
 import { AntDesign } from "@expo/vector-icons";
 
 import { Image, ListRenderItem, useWindowDimensions } from "react-native";
-import { Database } from "../constants/types";
 import Loading from "../components/Loading";
 import { upperCaseName } from "../utils/utils";
 import * as WebBrowser from "expo-web-browser";
@@ -27,7 +26,7 @@ const dog = () => {
   const router = useRouter();
   const { width, height } = useWindowDimensions();
   const [makeFullSize, setMakeFullSize] = useState(false);
-  const [selected, setSelected] = useState();
+  const [selectedIndex, setSelectedIndex] = useState<number>();
   const insets = useSafeAreaInsets();
 
   const queryClient = useQueryClient();
@@ -62,15 +61,26 @@ const dog = () => {
     dogDescription = nameString.split(".");
   }
 
-  const RenderedImages: ListRenderItem<string> = ({ item, selected }) => {
+  const onClick = (index: number) => {
+    setSelectedIndex(index);
+    setMakeFullSize(true);
+  };
+
+  const RenderedImages: ListRenderItem<string> = ({ item, index }) => {
     return (
-      <Pressable
-        onPress={() => {
-          setSelected(item);
-          setMakeFullSize(true);
-        }}
-      >
+      <Pressable onPress={() => onClick(index)}>
         <Image source={{ uri: item }} style={{ height: width, width: width }} />
+      </Pressable>
+    );
+  };
+
+  const ZoomedImage = ({ item, index }) => {
+    return (
+      <Pressable onLongPress={() => {}}>
+        <Image
+          source={{ uri: item }}
+          style={{ height: "100%", width: width, objectFit: "contain" }}
+        />
       </Pressable>
     );
   };
@@ -102,9 +112,17 @@ const dog = () => {
   }
 
   if (makeFullSize) {
-    console.log(selected);
     return (
-      <View position="relative">
+      <LinearGradient
+        colors={["rgba(240, 205, 247, 0.9)", "rgba(9, 235, 13, 0.4)"]}
+        start={{ x: 0.2, y: 0.4 }}
+        end={{ x: 1, y: 1 }}
+        style={{
+          height: "100%",
+
+          position: "relative",
+        }}
+      >
         <Pressable onPress={() => setMakeFullSize(false)}>
           <AntDesign
             name="closecircle"
@@ -114,14 +132,25 @@ const dog = () => {
               position: "absolute",
               top: insets.top,
               right: 30,
+              zIndex: 10,
             }}
           />
         </Pressable>
-        <Image
-          source={{ uri: selected }}
-          style={{ height: height, width: width, objectFit: "contain" }}
+        <FlatList
+          data={data?.images}
+          mb={10}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          initialScrollIndex={selectedIndex}
+          getItemLayout={(_, index) => ({
+            length: width,
+            offset: width * index,
+            index,
+          })}
+          renderItem={ZoomedImage}
         />
-      </View>
+      </LinearGradient>
     );
   }
 
@@ -143,9 +172,7 @@ const dog = () => {
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <RenderedImages selected={selected} item={item} />
-          )}
+          renderItem={RenderedImages}
         />
         <VStack space="lg" p={20}>
           <Heading size="2xl" color="$textDark950">
