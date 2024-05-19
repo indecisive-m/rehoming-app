@@ -20,14 +20,20 @@ import { upperCaseName } from "../utils/utils";
 import * as WebBrowser from "expo-web-browser";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 
 const dog = () => {
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { width, height } = useWindowDimensions();
-  const [makeFullSize, setMakeFullSize] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState<number>();
   const insets = useSafeAreaInsets();
+  const [imageHeight, setImageHeight] = useState(width);
+  const image = useSharedValue(width);
+  const imageFit = useSharedValue<"cover" | "contain">("cover");
 
   const queryClient = useQueryClient();
 
@@ -61,27 +67,30 @@ const dog = () => {
     dogDescription = nameString.split(".");
   }
 
-  const onClick = (index: number) => {
-    setSelectedIndex(index);
-    setMakeFullSize(true);
+  const makeImgFullScreen = () => {
+    image.value = withTiming(height);
+    setImageHeight(height);
+  };
+
+  const makeImgSmall = () => {
+    image.value = withTiming(width, { duration: 500 });
+    setImageHeight(width);
   };
 
   const RenderedImages: ListRenderItem<string> = ({ item, index }) => {
     return (
-      <Pressable onPress={() => onClick(index)}>
-        <Image source={{ uri: item }} style={{ height: width, width: width }} />
-      </Pressable>
-    );
-  };
-
-  const ZoomedImage = ({ item, index }) => {
-    return (
-      <Pressable onLongPress={() => {}}>
-        <Image
-          source={{ uri: item }}
-          style={{ height: "100%", width: width, objectFit: "contain" }}
-        />
-      </Pressable>
+      <View position="relative">
+        <Pressable onPress={() => makeImgFullScreen()}>
+          <Animated.Image
+            source={{ uri: item }}
+            style={{
+              height: image,
+              width: width,
+              objectFit: imageHeight === width ? "cover" : "contain",
+            }}
+          />
+        </Pressable>
+      </View>
     );
   };
 
@@ -111,49 +120,6 @@ const dog = () => {
     );
   }
 
-  if (makeFullSize) {
-    return (
-      <LinearGradient
-        colors={["rgba(240, 205, 247, 0.9)", "rgba(9, 235, 13, 0.4)"]}
-        start={{ x: 0.2, y: 0.4 }}
-        end={{ x: 1, y: 1 }}
-        style={{
-          height: "100%",
-
-          position: "relative",
-        }}
-      >
-        <Pressable onPress={() => setMakeFullSize(false)}>
-          <AntDesign
-            name="closecircle"
-            size={24}
-            color="black"
-            style={{
-              position: "absolute",
-              top: insets.top,
-              right: 30,
-              zIndex: 10,
-            }}
-          />
-        </Pressable>
-        <FlatList
-          data={data?.images}
-          mb={10}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          initialScrollIndex={selectedIndex}
-          getItemLayout={(_, index) => ({
-            length: width,
-            offset: width * index,
-            index,
-          })}
-          renderItem={ZoomedImage}
-        />
-      </LinearGradient>
-    );
-  }
-
   return (
     <LinearGradient
       colors={["rgba(240, 205, 247, 0.9)", "rgba(9, 235, 13, 0.4)"]}
@@ -165,7 +131,24 @@ const dog = () => {
         alignItems: "center",
       }}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        position="relative"
+        scrollEnabled={imageHeight === width ? true : false}
+      >
+        {imageHeight === width ? null : (
+          <Pressable
+            onPress={() => makeImgSmall()}
+            style={{
+              zIndex: 10,
+              position: "absolute",
+              top: insets.top,
+              right: 30,
+            }}
+          >
+            <AntDesign name="closecircle" size={32} color="black" />
+          </Pressable>
+        )}
         <FlatList
           data={data?.images}
           mb={10}
