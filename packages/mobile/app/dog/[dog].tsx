@@ -21,21 +21,35 @@ import * as WebBrowser from "expo-web-browser";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
+  interpolate,
+  runOnJS,
+  runOnUI,
+  useAnimatedRef,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { GestureDetector, Gesture } from "react-native-gesture-handler";
 
 const dog = () => {
+  const queryClient = useQueryClient();
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
   const { id } = useLocalSearchParams();
   const router = useRouter();
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const [imageHeight, setImageHeight] = useState(width);
-  const image = useSharedValue(width);
-  const imageFit = useSharedValue<"cover" | "contain">("cover");
 
-  const queryClient = useQueryClient();
+  const image = useSharedValue(width);
+  const scale = useSharedValue(1);
+
+  const pinch = Gesture.Pinch()
+    .onUpdate((event) => {
+      scale.value = event.scale;
+    })
+    .onEnd(() => {
+      scale.value = withTiming(1);
+    });
 
   const { data, isLoading } = useQuery({
     queryKey: ["dog", id],
@@ -68,14 +82,23 @@ const dog = () => {
   }
 
   const makeImgFullScreen = () => {
-    image.value = withTiming(height);
+    image.value = withTiming(height, { duration: 400 });
     setImageHeight(height);
   };
 
   const makeImgSmall = () => {
-    image.value = withTiming(width, { duration: 500 });
-    setImageHeight(width);
+    image.value = withTiming(width, { duration: 400 }, () => {
+      runOnJS(setImageHeight)(width);
+    });
   };
+
+  const imageAnimationStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const pressableAnimationStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(image.value, [height, width], [1, 0]),
+  }));
 
   const RenderedImages: ListRenderItem<string> = ({ item, index }) => {
     return (
@@ -83,11 +106,14 @@ const dog = () => {
         <Pressable onPress={() => makeImgFullScreen()}>
           <Animated.Image
             source={{ uri: item }}
-            style={{
-              height: image,
-              width: width,
-              objectFit: imageHeight === width ? "cover" : "contain",
-            }}
+            style={[
+              {
+                height: image,
+                width: width,
+                objectFit: imageHeight === width ? "cover" : "contain",
+              },
+              imageAnimationStyle,
+            ]}
           />
         </Pressable>
       </View>
@@ -137,26 +163,32 @@ const dog = () => {
         scrollEnabled={imageHeight === width ? true : false}
       >
         {imageHeight === width ? null : (
-          <Pressable
+          <AnimatedPressable
             onPress={() => makeImgSmall()}
-            style={{
-              zIndex: 10,
-              position: "absolute",
-              top: insets.top,
-              right: 30,
-            }}
+            style={[
+              {
+                zIndex: 10,
+                position: "absolute",
+                top: insets.top + 10,
+                right: insets.right + 10,
+              },
+              pressableAnimationStyle,
+            ]}
           >
             <AntDesign name="closecircle" size={32} color="black" />
-          </Pressable>
+          </AnimatedPressable>
         )}
-        <FlatList
-          data={data?.images}
-          mb={10}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          renderItem={RenderedImages}
-        />
+        <GestureDetector gesture={pinch}>
+          <FlatList
+            data={data?.images}
+            mb={10}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            renderItem={RenderedImages}
+          />
+        </GestureDetector>
+
         <VStack space="lg" p={20}>
           <Heading size="2xl" color="$textDark950">
             {dogName}
